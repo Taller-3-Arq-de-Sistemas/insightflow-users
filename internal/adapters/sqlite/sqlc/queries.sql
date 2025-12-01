@@ -4,6 +4,9 @@ SELECT * FROM role;
 -- name: FindRoleById :one
 SELECT * FROM role WHERE id = ?;
 
+-- name: FindRoleByName :one
+SELECT * FROM role WHERE name = ?;
+
 -- name: CreateRole :one
 INSERT INTO role (name, description) VALUES (?, ?) RETURNING *;
 

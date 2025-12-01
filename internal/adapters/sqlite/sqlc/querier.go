@@ -14,6 +14,7 @@ type Querier interface {
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	DeleteUser(ctx context.Context, id string) error
 	FindRoleById(ctx context.Context, id string) (Role, error)
+	FindRoleByName(ctx context.Context, name string) (Role, error)
 	FindTokenBlacklist(ctx context.Context, token string) (TokenBlacklist, error)
 	FindUserByEmail(ctx context.Context, email string) (User, error)
 	FindUserById(ctx context.Context, id string) (User, error)

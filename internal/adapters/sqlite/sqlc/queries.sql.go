@@ -7,7 +7,6 @@ package repository
 
 import (
 	"context"
-	"database/sql"
 	"time"
 )
 
@@ -43,17 +42,17 @@ INSERT INTO user (id, name, last_names, email, username, password, status, birth
 `
 
 type CreateUserParams struct {
-	ID        string         `json:"id"`
-	Name      string         `json:"name"`
-	LastNames string         `json:"last_names"`
-	Email     string         `json:"email"`
-	Username  string         `json:"username"`
-	Password  string         `json:"password"`
-	Status    sql.NullString `json:"status"`
-	BirthDate time.Time      `json:"birth_date"`
-	Address   string         `json:"address"`
-	Phone     string         `json:"phone"`
-	RoleID    string         `json:"role_id"`
+	ID        string    `json:"id"`
+	Name      string    `json:"name"`
+	LastNames string    `json:"last_names"`
+	Email     string    `json:"email"`
+	Username  string    `json:"username"`
+	Password  string    `json:"password"`
+	Status    string    `json:"status"`
+	BirthDate time.Time `json:"birth_date"`
+	Address   string    `json:"address"`
+	Phone     string    `json:"phone"`
+	RoleID    string    `json:"role_id"`
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
@@ -103,6 +102,17 @@ SELECT id, name, description FROM role WHERE id = ?
 
 func (q *Queries) FindRoleById(ctx context.Context, id string) (Role, error) {
 	row := q.db.QueryRowContext(ctx, findRoleById, id)
+	var i Role
+	err := row.Scan(&i.ID, &i.Name, &i.Description)
+	return i, err
+}
+
+const findRoleByName = `-- name: FindRoleByName :one
+SELECT id, name, description FROM role WHERE name = ?
+`
+
+func (q *Queries) FindRoleByName(ctx context.Context, name string) (Role, error) {
+	row := q.db.QueryRowContext(ctx, findRoleByName, name)
 	var i Role
 	err := row.Scan(&i.ID, &i.Name, &i.Description)
 	return i, err
@@ -239,17 +249,17 @@ UPDATE user SET name = ?, last_names = ?, email = ?, username = ?, password = ?,
 `
 
 type UpdateUserParams struct {
-	Name      string         `json:"name"`
-	LastNames string         `json:"last_names"`
-	Email     string         `json:"email"`
-	Username  string         `json:"username"`
-	Password  string         `json:"password"`
-	Status    sql.NullString `json:"status"`
-	BirthDate time.Time      `json:"birth_date"`
-	Address   string         `json:"address"`
-	Phone     string         `json:"phone"`
-	RoleID    string         `json:"role_id"`
-	ID        string         `json:"id"`
+	Name      string    `json:"name"`
+	LastNames string    `json:"last_names"`
+	Email     string    `json:"email"`
+	Username  string    `json:"username"`
+	Password  string    `json:"password"`
+	Status    string    `json:"status"`
+	BirthDate time.Time `json:"birth_date"`
+	Address   string    `json:"address"`
+	Phone     string    `json:"phone"`
+	RoleID    string    `json:"role_id"`
+	ID        string    `json:"id"`
 }
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error) {
