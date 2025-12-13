@@ -7,7 +7,6 @@ package repository
 
 import (
 	"context"
-	"database/sql"
 	"time"
 )
 
@@ -39,24 +38,26 @@ func (q *Queries) CreateTokenBlacklist(ctx context.Context, token string) (Token
 }
 
 const createUser = `-- name: CreateUser :one
-INSERT INTO user (id, name, last_names, email, username, password, status, birth_date, address, phone, role_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id, name, last_names, email, username, password, status, birth_date, address, phone, created_at, role_id
+INSERT INTO user (id, name, last_names, email, username, password, status, birth_date, address, phone, role_id) 
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+RETURNING id
 `
 
 type CreateUserParams struct {
-	ID        string         `json:"id"`
-	Name      string         `json:"name"`
-	LastNames string         `json:"last_names"`
-	Email     string         `json:"email"`
-	Username  string         `json:"username"`
-	Password  string         `json:"password"`
-	Status    sql.NullString `json:"status"`
-	BirthDate time.Time      `json:"birth_date"`
-	Address   string         `json:"address"`
-	Phone     string         `json:"phone"`
-	RoleID    string         `json:"role_id"`
+	ID        string    `json:"id"`
+	Name      string    `json:"name"`
+	LastNames string    `json:"last_names"`
+	Email     string    `json:"email"`
+	Username  string    `json:"username"`
+	Password  string    `json:"password"`
+	Status    string    `json:"status"`
+	BirthDate time.Time `json:"birth_date"`
+	Address   string    `json:"address"`
+	Phone     string    `json:"phone"`
+	RoleID    string    `json:"role_id"`
 }
 
-func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
+func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (string, error) {
 	row := q.db.QueryRowContext(ctx, createUser,
 		arg.ID,
 		arg.Name,
@@ -70,22 +71,9 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		arg.Phone,
 		arg.RoleID,
 	)
-	var i User
-	err := row.Scan(
-		&i.ID,
-		&i.Name,
-		&i.LastNames,
-		&i.Email,
-		&i.Username,
-		&i.Password,
-		&i.Status,
-		&i.BirthDate,
-		&i.Address,
-		&i.Phone,
-		&i.CreatedAt,
-		&i.RoleID,
-	)
-	return i, err
+	var id string
+	err := row.Scan(&id)
+	return id, err
 }
 
 const deleteUser = `-- name: DeleteUser :exec
@@ -108,24 +96,51 @@ func (q *Queries) FindRoleById(ctx context.Context, id string) (Role, error) {
 	return i, err
 }
 
-const findTokenBlacklist = `-- name: FindTokenBlacklist :one
-SELECT id, token, created_at FROM token_blacklist WHERE token = ?
+const findRoleByName = `-- name: FindRoleByName :one
+SELECT id, name, description FROM role WHERE name = ?
 `
 
-func (q *Queries) FindTokenBlacklist(ctx context.Context, token string) (TokenBlacklist, error) {
-	row := q.db.QueryRowContext(ctx, findTokenBlacklist, token)
-	var i TokenBlacklist
-	err := row.Scan(&i.ID, &i.Token, &i.CreatedAt)
+func (q *Queries) FindRoleByName(ctx context.Context, name string) (Role, error) {
+	row := q.db.QueryRowContext(ctx, findRoleByName, name)
+	var i Role
+	err := row.Scan(&i.ID, &i.Name, &i.Description)
 	return i, err
 }
 
-const findUserByEmail = `-- name: FindUserByEmail :one
-SELECT id, name, last_names, email, username, password, status, birth_date, address, phone, created_at, role_id FROM user WHERE email = ?
+const findTokenBlacklist = `-- name: FindTokenBlacklist :one
+SELECT token FROM token_blacklist WHERE token = ?
 `
 
-func (q *Queries) FindUserByEmail(ctx context.Context, email string) (User, error) {
+func (q *Queries) FindTokenBlacklist(ctx context.Context, token string) (string, error) {
+	row := q.db.QueryRowContext(ctx, findTokenBlacklist, token)
+	err := row.Scan(&token)
+	return token, err
+}
+
+const findUserByEmail = `-- name: FindUserByEmail :one
+SELECT user.id, user.name, user.last_names, user.email, user.username, user.password, user.status, user.birth_date, user.address, user.phone, r.name as role 
+FROM user 
+INNER JOIN role r ON user.role_id = r.id
+WHERE user.email = ?
+`
+
+type FindUserByEmailRow struct {
+	ID        string    `json:"id"`
+	Name      string    `json:"name"`
+	LastNames string    `json:"last_names"`
+	Email     string    `json:"email"`
+	Username  string    `json:"username"`
+	Password  string    `json:"password"`
+	Status    string    `json:"status"`
+	BirthDate time.Time `json:"birth_date"`
+	Address   string    `json:"address"`
+	Phone     string    `json:"phone"`
+	Role      string    `json:"role"`
+}
+
+func (q *Queries) FindUserByEmail(ctx context.Context, email string) (FindUserByEmailRow, error) {
 	row := q.db.QueryRowContext(ctx, findUserByEmail, email)
-	var i User
+	var i FindUserByEmailRow
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
@@ -137,19 +152,73 @@ func (q *Queries) FindUserByEmail(ctx context.Context, email string) (User, erro
 		&i.BirthDate,
 		&i.Address,
 		&i.Phone,
-		&i.CreatedAt,
-		&i.RoleID,
+		&i.Role,
 	)
 	return i, err
 }
 
 const findUserById = `-- name: FindUserById :one
-SELECT id, name, last_names, email, username, password, status, birth_date, address, phone, created_at, role_id FROM user WHERE id = ?
+SELECT user.id, user.name, user.last_names, user.email, user.username, user.status, user.birth_date, user.address, user.phone, r.name as role 
+FROM user 
+INNER JOIN role r ON user.role_id = r.id
+WHERE user.id = ?
 `
 
-func (q *Queries) FindUserById(ctx context.Context, id string) (User, error) {
+type FindUserByIdRow struct {
+	ID        string    `json:"id"`
+	Name      string    `json:"name"`
+	LastNames string    `json:"last_names"`
+	Email     string    `json:"email"`
+	Username  string    `json:"username"`
+	Status    string    `json:"status"`
+	BirthDate time.Time `json:"birth_date"`
+	Address   string    `json:"address"`
+	Phone     string    `json:"phone"`
+	Role      string    `json:"role"`
+}
+
+func (q *Queries) FindUserById(ctx context.Context, id string) (FindUserByIdRow, error) {
 	row := q.db.QueryRowContext(ctx, findUserById, id)
-	var i User
+	var i FindUserByIdRow
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.LastNames,
+		&i.Email,
+		&i.Username,
+		&i.Status,
+		&i.BirthDate,
+		&i.Address,
+		&i.Phone,
+		&i.Role,
+	)
+	return i, err
+}
+
+const findUserByUsername = `-- name: FindUserByUsername :one
+SELECT user.id, user.name, user.last_names, user.email, user.username, user.password, user.status, user.birth_date, user.address, user.phone, r.name as role 
+FROM user 
+INNER JOIN role r ON user.role_id = r.id
+WHERE user.username = ?
+`
+
+type FindUserByUsernameRow struct {
+	ID        string    `json:"id"`
+	Name      string    `json:"name"`
+	LastNames string    `json:"last_names"`
+	Email     string    `json:"email"`
+	Username  string    `json:"username"`
+	Password  string    `json:"password"`
+	Status    string    `json:"status"`
+	BirthDate time.Time `json:"birth_date"`
+	Address   string    `json:"address"`
+	Phone     string    `json:"phone"`
+	Role      string    `json:"role"`
+}
+
+func (q *Queries) FindUserByUsername(ctx context.Context, username string) (FindUserByUsernameRow, error) {
+	row := q.db.QueryRowContext(ctx, findUserByUsername, username)
+	var i FindUserByUsernameRow
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
@@ -161,8 +230,7 @@ func (q *Queries) FindUserById(ctx context.Context, id string) (User, error) {
 		&i.BirthDate,
 		&i.Address,
 		&i.Phone,
-		&i.CreatedAt,
-		&i.RoleID,
+		&i.Role,
 	)
 	return i, err
 }
@@ -195,31 +263,45 @@ func (q *Queries) ListRoles(ctx context.Context) ([]Role, error) {
 }
 
 const listUsers = `-- name: ListUsers :many
-SELECT id, name, last_names, email, username, password, status, birth_date, address, phone, created_at, role_id FROM user
+SELECT user.id, user.name, user.last_names, user.email, user.username, user.status, user.birth_date, user.address, user.phone, r.name as role 
+FROM user 
+INNER JOIN role r ON user.role_id = r.id
+WHERE user.status = 'active'
 `
 
-func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
+type ListUsersRow struct {
+	ID        string    `json:"id"`
+	Name      string    `json:"name"`
+	LastNames string    `json:"last_names"`
+	Email     string    `json:"email"`
+	Username  string    `json:"username"`
+	Status    string    `json:"status"`
+	BirthDate time.Time `json:"birth_date"`
+	Address   string    `json:"address"`
+	Phone     string    `json:"phone"`
+	Role      string    `json:"role"`
+}
+
+func (q *Queries) ListUsers(ctx context.Context) ([]ListUsersRow, error) {
 	rows, err := q.db.QueryContext(ctx, listUsers)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []User
+	var items []ListUsersRow
 	for rows.Next() {
-		var i User
+		var i ListUsersRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.Name,
 			&i.LastNames,
 			&i.Email,
 			&i.Username,
-			&i.Password,
 			&i.Status,
 			&i.BirthDate,
 			&i.Address,
 			&i.Phone,
-			&i.CreatedAt,
-			&i.RoleID,
+			&i.Role,
 		); err != nil {
 			return nil, err
 		}
@@ -235,51 +317,27 @@ func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
 }
 
 const updateUser = `-- name: UpdateUser :one
-UPDATE user SET name = ?, last_names = ?, email = ?, username = ?, password = ?, status = ?, birth_date = ?, address = ?, phone = ?, role_id = ? WHERE id = ? RETURNING id, name, last_names, email, username, password, status, birth_date, address, phone, created_at, role_id
+UPDATE user 
+SET name = ?, last_names = ?, username = ? 
+WHERE id = ? 
+RETURNING id
 `
 
 type UpdateUserParams struct {
-	Name      string         `json:"name"`
-	LastNames string         `json:"last_names"`
-	Email     string         `json:"email"`
-	Username  string         `json:"username"`
-	Password  string         `json:"password"`
-	Status    sql.NullString `json:"status"`
-	BirthDate time.Time      `json:"birth_date"`
-	Address   string         `json:"address"`
-	Phone     string         `json:"phone"`
-	RoleID    string         `json:"role_id"`
-	ID        string         `json:"id"`
+	Name      string `json:"name"`
+	LastNames string `json:"last_names"`
+	Username  string `json:"username"`
+	ID        string `json:"id"`
 }
 
-func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error) {
+func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (string, error) {
 	row := q.db.QueryRowContext(ctx, updateUser,
 		arg.Name,
 		arg.LastNames,
-		arg.Email,
 		arg.Username,
-		arg.Password,
-		arg.Status,
-		arg.BirthDate,
-		arg.Address,
-		arg.Phone,
-		arg.RoleID,
 		arg.ID,
 	)
-	var i User
-	err := row.Scan(
-		&i.ID,
-		&i.Name,
-		&i.LastNames,
-		&i.Email,
-		&i.Username,
-		&i.Password,
-		&i.Status,
-		&i.BirthDate,
-		&i.Address,
-		&i.Phone,
-		&i.CreatedAt,
-		&i.RoleID,
-	)
-	return i, err
+	var id string
+	err := row.Scan(&id)
+	return id, err
 }

@@ -11,6 +11,7 @@
 *.dll
 *.so
 *.dylib
+bin/
 
 # Test binary, built with `go test -c`
 *.test
@@ -23,6 +24,9 @@
 
 # Go workspace file
 go.work
+
+# Visual Studio Code files
+.vscode/
 
 # Databases
 *.db

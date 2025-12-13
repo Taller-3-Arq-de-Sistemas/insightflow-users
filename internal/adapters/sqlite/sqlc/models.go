@@ -5,7 +5,6 @@
 package repository
 
 import (
-	"database/sql"
 	"time"
 )
 
@@ -16,22 +15,22 @@ type Role struct {
 }
 
 type TokenBlacklist struct {
-	ID        string    `json:"id"`
+	ID        int64     `json:"id"`
 	Token     string    `json:"token"`
 	CreatedAt time.Time `json:"created_at"`
 }
 
 type User struct {
-	ID        string         `json:"id"`
-	Name      string         `json:"name"`
-	LastNames string         `json:"last_names"`
-	Email     string         `json:"email"`
-	Username  string         `json:"username"`
-	Password  string         `json:"password"`
-	Status    sql.NullString `json:"status"`
-	BirthDate time.Time      `json:"birth_date"`
-	Address   string         `json:"address"`
-	Phone     string         `json:"phone"`
-	CreatedAt time.Time      `json:"created_at"`
-	RoleID    string         `json:"role_id"`
+	ID        string    `json:"id"`
+	Name      string    `json:"name"`
+	LastNames string    `json:"last_names"`
+	Email     string    `json:"email"`
+	Username  string    `json:"username"`
+	Password  string    `json:"password"`
+	Status    string    `json:"status"`
+	BirthDate time.Time `json:"birth_date"`
+	Address   string    `json:"address"`
+	Phone     string    `json:"phone"`
+	CreatedAt time.Time `json:"created_at"`
+	RoleID    string    `json:"role_id"`
 }

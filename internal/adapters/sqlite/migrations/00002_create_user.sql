@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS user (
     email TEXT NOT NULL,
     username TEXT NOT NULL,
     password TEXT NOT NULL,
-    status TEXT DEFAULT 'active',
+    status TEXT NOT NULL DEFAULT 'active',
     birth_date DATE NOT NULL,
     address TEXT NOT NULL,
     phone TEXT NOT NULL,
