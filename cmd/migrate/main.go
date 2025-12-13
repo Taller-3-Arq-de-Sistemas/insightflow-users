@@ -9,13 +9,13 @@ import (
 
 	"github.com/Taller-3-Arq-de-Sistemas/insightflow-users/config"
 	"github.com/Taller-3-Arq-de-Sistemas/insightflow-users/internal/adapters/sqlite/migrations"
-	_ "github.com/mattn/go-sqlite3"
 	"github.com/pressly/goose/v3"
+	_ "modernc.org/sqlite"
 )
 
 func main() {
 	cfg := config.Load()
-	db, err := sql.Open("sqlite3", cfg.DBUrl)
+	db, err := sql.Open("sqlite", cfg.DBUrl)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -23,7 +23,7 @@ func main() {
 
 	goose.SetBaseFS(migrations.EmbedFS)
 
-	if err := goose.SetDialect("sqlite3"); err != nil {
+	if err := goose.SetDialect("sqlite"); err != nil {
 		log.Fatal(err)
 	}
 
