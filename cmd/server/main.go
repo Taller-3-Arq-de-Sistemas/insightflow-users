@@ -50,16 +50,12 @@ func main() {
 		IdleTimeout:  time.Minute,
 	}
 
-	// Server run context
 	serverCtx, serverStopCtx := context.WithCancel(context.Background())
 
-	// Listen for syscall signals for process to interrupt/quit
 	sig := make(chan os.Signal, 1)
 	signal.Notify(sig, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 	go func() {
 		<-sig
-
-		// Shutdown signal with grace period of 30 seconds
 		shutdownCtx, cancel := context.WithTimeout(serverCtx, 30*time.Second)
 		defer cancel()
 
@@ -70,7 +66,6 @@ func main() {
 			}
 		}()
 
-		// Trigger graceful shutdown
 		err := server.Shutdown(shutdownCtx)
 		if err != nil {
 			logger.Error("server shutdown error", "error", err)
@@ -78,7 +73,6 @@ func main() {
 		serverStopCtx()
 	}()
 
-	// Run the server
 	logger.Info("server starting", "port", cfg.Port)
 	err = server.ListenAndServe()
 	if err != nil && err != http.ErrServerClosed {
@@ -86,7 +80,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Wait for server context to be stopped
 	<-serverCtx.Done()
 	logger.Info("server stopped")
 }
