@@ -1,0 +1,28 @@
+# Version Control
+.git/
+.gitignore
+
+# Go Build Artifacts
+bin/
+*.exe
+*.test
+*.out
+go.work
+go.work.sum
+
+# Local Development Configuration
+.env
+.env.*
+.vscode/
+.idea/
+docker-compose.yaml
+docker-compose.override.yaml
+Makefile
+
+# Database
+*.db
+*.sqlite
+
+# OS Generated
+.DS_Store
+Thumbs.db
