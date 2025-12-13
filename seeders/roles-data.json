@@ -1,0 +1,17 @@
+[
+  {
+    "id": "830f5b8f-2c84-4f98-86ff-657d7a43844d",
+    "name": "admin",
+    "description": "Administrator"
+  },
+  {
+    "id": "1bc5831e-ecd5-4f3e-a77e-c463189844e8",
+    "name": "user",
+    "description": "User"
+  },
+  {
+    "id": "b0022fed-7938-4955-89a1-52bec7f8efa2",
+    "name": "editor",
+    "description": "Editor"
+  }
+]
