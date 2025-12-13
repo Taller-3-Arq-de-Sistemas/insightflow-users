@@ -11,16 +11,17 @@ import (
 type Querier interface {
 	CreateRole(ctx context.Context, arg CreateRoleParams) (Role, error)
 	CreateTokenBlacklist(ctx context.Context, token string) (TokenBlacklist, error)
-	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
+	CreateUser(ctx context.Context, arg CreateUserParams) (string, error)
 	DeleteUser(ctx context.Context, id string) error
 	FindRoleById(ctx context.Context, id string) (Role, error)
 	FindRoleByName(ctx context.Context, name string) (Role, error)
-	FindTokenBlacklist(ctx context.Context, token string) (TokenBlacklist, error)
-	FindUserByEmail(ctx context.Context, email string) (User, error)
-	FindUserById(ctx context.Context, id string) (User, error)
+	FindTokenBlacklist(ctx context.Context, token string) (string, error)
+	FindUserByEmail(ctx context.Context, email string) (FindUserByEmailRow, error)
+	FindUserById(ctx context.Context, id string) (FindUserByIdRow, error)
+	FindUserByUsername(ctx context.Context, username string) (FindUserByUsernameRow, error)
 	ListRoles(ctx context.Context) ([]Role, error)
-	ListUsers(ctx context.Context) ([]User, error)
-	UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error)
+	ListUsers(ctx context.Context) ([]ListUsersRow, error)
+	UpdateUser(ctx context.Context, arg UpdateUserParams) (string, error)
 }
 
 var _ Querier = (*Queries)(nil)
