@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	repository "github.com/Taller-3-Arq-de-Sistemas/insightflow-users/internal/adapters/sqlite/sqlc"
+	repository "github.com/Taller-3-Arq-de-Sistemas/insightflow-users/internal/adapters/postgres/sqlc"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )

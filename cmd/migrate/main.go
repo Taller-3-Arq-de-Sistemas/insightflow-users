@@ -3,19 +3,18 @@ package main
 import (
 	"context"
 	"database/sql"
-
 	"log"
 	"os"
 
 	"github.com/Taller-3-Arq-de-Sistemas/insightflow-users/config"
-	"github.com/Taller-3-Arq-de-Sistemas/insightflow-users/internal/adapters/sqlite/migrations"
+	"github.com/Taller-3-Arq-de-Sistemas/insightflow-users/internal/adapters/postgres/migrations"
+	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/pressly/goose/v3"
-	_ "modernc.org/sqlite"
 )
 
 func main() {
 	cfg := config.Load()
-	db, err := sql.Open("sqlite", cfg.DBUrl)
+	db, err := sql.Open("pgx", cfg.DBUrl)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -23,7 +22,7 @@ func main() {
 
 	goose.SetBaseFS(migrations.EmbedFS)
 
-	if err := goose.SetDialect("sqlite3"); err != nil {
+	if err := goose.SetDialect("postgres"); err != nil {
 		log.Fatal(err)
 	}
 

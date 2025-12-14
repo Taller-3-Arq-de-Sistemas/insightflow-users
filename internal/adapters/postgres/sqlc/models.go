@@ -15,7 +15,7 @@ type Role struct {
 }
 
 type TokenBlacklist struct {
-	ID        int64     `json:"id"`
+	ID        int32     `json:"id"`
 	Token     string    `json:"token"`
 	CreatedAt time.Time `json:"created_at"`
 }

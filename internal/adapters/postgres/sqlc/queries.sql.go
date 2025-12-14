@@ -11,7 +11,7 @@ import (
 )
 
 const createRole = `-- name: CreateRole :one
-INSERT INTO role (name, description) VALUES (?, ?) RETURNING id, name, description
+INSERT INTO role (name, description) VALUES ($1, $2) RETURNING id, name, description
 `
 
 type CreateRoleParams struct {
@@ -27,7 +27,7 @@ func (q *Queries) CreateRole(ctx context.Context, arg CreateRoleParams) (Role, e
 }
 
 const createTokenBlacklist = `-- name: CreateTokenBlacklist :one
-INSERT INTO token_blacklist (token) VALUES (?) RETURNING id, token, created_at
+INSERT INTO token_blacklist (token) VALUES ($1) RETURNING id, token, created_at
 `
 
 func (q *Queries) CreateTokenBlacklist(ctx context.Context, token string) (TokenBlacklist, error) {
@@ -38,8 +38,8 @@ func (q *Queries) CreateTokenBlacklist(ctx context.Context, token string) (Token
 }
 
 const createUser = `-- name: CreateUser :one
-INSERT INTO user (id, name, last_names, email, username, password, status, birth_date, address, phone, role_id) 
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+INSERT INTO users (id, name, last_names, email, username, password, status, birth_date, address, phone, role_id)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 RETURNING id
 `
 
@@ -77,7 +77,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (string,
 }
 
 const deleteUser = `-- name: DeleteUser :exec
-UPDATE user SET status = 'deleted' WHERE id = ?
+UPDATE users SET status = 'deleted' WHERE id = $1
 `
 
 func (q *Queries) DeleteUser(ctx context.Context, id string) error {
@@ -86,7 +86,7 @@ func (q *Queries) DeleteUser(ctx context.Context, id string) error {
 }
 
 const findRoleById = `-- name: FindRoleById :one
-SELECT id, name, description FROM role WHERE id = ?
+SELECT id, name, description FROM role WHERE id = $1
 `
 
 func (q *Queries) FindRoleById(ctx context.Context, id string) (Role, error) {
@@ -97,7 +97,7 @@ func (q *Queries) FindRoleById(ctx context.Context, id string) (Role, error) {
 }
 
 const findRoleByName = `-- name: FindRoleByName :one
-SELECT id, name, description FROM role WHERE name = ?
+SELECT id, name, description FROM role WHERE name = $1
 `
 
 func (q *Queries) FindRoleByName(ctx context.Context, name string) (Role, error) {
@@ -108,7 +108,7 @@ func (q *Queries) FindRoleByName(ctx context.Context, name string) (Role, error)
 }
 
 const findTokenBlacklist = `-- name: FindTokenBlacklist :one
-SELECT token FROM token_blacklist WHERE token = ?
+SELECT token FROM token_blacklist WHERE token = $1
 `
 
 func (q *Queries) FindTokenBlacklist(ctx context.Context, token string) (string, error) {
@@ -118,10 +118,10 @@ func (q *Queries) FindTokenBlacklist(ctx context.Context, token string) (string,
 }
 
 const findUserByEmail = `-- name: FindUserByEmail :one
-SELECT user.id, user.name, user.last_names, user.email, user.username, user.password, user.status, user.birth_date, user.address, user.phone, r.name as role 
-FROM user 
-INNER JOIN role r ON user.role_id = r.id
-WHERE user.email = ?
+SELECT users.id, users.name, users.last_names, users.email, users.username, users.password, users.status, users.birth_date, users.address, users.phone, r.name as role
+FROM users
+INNER JOIN role r ON users.role_id = r.id
+WHERE users.email = $1
 `
 
 type FindUserByEmailRow struct {
@@ -158,10 +158,10 @@ func (q *Queries) FindUserByEmail(ctx context.Context, email string) (FindUserBy
 }
 
 const findUserById = `-- name: FindUserById :one
-SELECT user.id, user.name, user.last_names, user.email, user.username, user.status, user.birth_date, user.address, user.phone, r.name as role 
-FROM user 
-INNER JOIN role r ON user.role_id = r.id
-WHERE user.id = ?
+SELECT users.id, users.name, users.last_names, users.email, users.username, users.status, users.birth_date, users.address, users.phone, r.name as role
+FROM users
+INNER JOIN role r ON users.role_id = r.id
+WHERE users.id = $1
 `
 
 type FindUserByIdRow struct {
@@ -196,10 +196,10 @@ func (q *Queries) FindUserById(ctx context.Context, id string) (FindUserByIdRow,
 }
 
 const findUserByUsername = `-- name: FindUserByUsername :one
-SELECT user.id, user.name, user.last_names, user.email, user.username, user.password, user.status, user.birth_date, user.address, user.phone, r.name as role 
-FROM user 
-INNER JOIN role r ON user.role_id = r.id
-WHERE user.username = ?
+SELECT users.id, users.name, users.last_names, users.email, users.username, users.password, users.status, users.birth_date, users.address, users.phone, r.name as role
+FROM users
+INNER JOIN role r ON users.role_id = r.id
+WHERE users.username = $1
 `
 
 type FindUserByUsernameRow struct {
@@ -263,10 +263,10 @@ func (q *Queries) ListRoles(ctx context.Context) ([]Role, error) {
 }
 
 const listUsers = `-- name: ListUsers :many
-SELECT user.id, user.name, user.last_names, user.email, user.username, user.status, user.birth_date, user.address, user.phone, r.name as role 
-FROM user 
-INNER JOIN role r ON user.role_id = r.id
-WHERE user.status = 'active'
+SELECT users.id, users.name, users.last_names, users.email, users.username, users.status, users.birth_date, users.address, users.phone, r.name as role
+FROM users
+INNER JOIN role r ON users.role_id = r.id
+WHERE users.status = 'active'
 `
 
 type ListUsersRow struct {
@@ -317,9 +317,9 @@ func (q *Queries) ListUsers(ctx context.Context) ([]ListUsersRow, error) {
 }
 
 const updateUser = `-- name: UpdateUser :one
-UPDATE user 
-SET name = ?, last_names = ?, username = ? 
-WHERE id = ? 
+UPDATE users
+SET name = $1, last_names = $2, username = $3
+WHERE id = $4
 RETURNING id
 `
 

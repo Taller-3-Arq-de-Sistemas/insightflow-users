@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/Taller-3-Arq-de-Sistemas/insightflow-users/config"
-	"github.com/Taller-3-Arq-de-Sistemas/insightflow-users/internal/adapters/sqlite"
-	repository "github.com/Taller-3-Arq-de-Sistemas/insightflow-users/internal/adapters/sqlite/sqlc"
+	"github.com/Taller-3-Arq-de-Sistemas/insightflow-users/internal/adapters/postgres"
+	repository "github.com/Taller-3-Arq-de-Sistemas/insightflow-users/internal/adapters/postgres/sqlc"
 	"github.com/Taller-3-Arq-de-Sistemas/insightflow-users/internal/auth"
 	"github.com/Taller-3-Arq-de-Sistemas/insightflow-users/internal/users"
 )
@@ -22,7 +22,7 @@ func main() {
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 	slog.SetDefault(logger)
 
-	db, err := sqlite.New(cfg.DBUrl)
+	db, err := postgres.New(cfg.DBUrl)
 	if err != nil {
 		logger.Error("Unable to open database", "error", err)
 		os.Exit(1)
