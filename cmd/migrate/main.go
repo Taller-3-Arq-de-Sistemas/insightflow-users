@@ -23,7 +23,7 @@ func main() {
 
 	goose.SetBaseFS(migrations.EmbedFS)
 
-	if err := goose.SetDialect("sqlite"); err != nil {
+	if err := goose.SetDialect("sqlite3"); err != nil {
 		log.Fatal(err)
 	}
 
