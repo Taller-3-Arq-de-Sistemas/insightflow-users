@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/Taller-3-Arq-de-Sistemas/insightflow-users/config"
-	repository "github.com/Taller-3-Arq-de-Sistemas/insightflow-users/internal/adapters/sqlite/sqlc"
+	repository "github.com/Taller-3-Arq-de-Sistemas/insightflow-users/internal/adapters/postgres/sqlc"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"

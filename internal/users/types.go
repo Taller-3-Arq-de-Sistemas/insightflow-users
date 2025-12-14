@@ -3,7 +3,7 @@ package users
 import (
 	"context"
 
-	repository "github.com/Taller-3-Arq-de-Sistemas/insightflow-users/internal/adapters/sqlite/sqlc"
+	repository "github.com/Taller-3-Arq-de-Sistemas/insightflow-users/internal/adapters/postgres/sqlc"
 )
 
 type Service interface {

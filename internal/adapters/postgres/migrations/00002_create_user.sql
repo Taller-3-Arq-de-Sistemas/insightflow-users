@@ -1,6 +1,6 @@
 -- +goose Up
 -- +goose StatementBegin
-CREATE TABLE IF NOT EXISTS user (
+CREATE TABLE IF NOT EXISTS users (
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
     last_names TEXT NOT NULL,
@@ -19,5 +19,5 @@ CREATE TABLE IF NOT EXISTS user (
 
 -- +goose Down
 -- +goose StatementBegin
-DROP TABLE IF EXISTS user;
+DROP TABLE IF EXISTS users;
 -- +goose StatementEnd

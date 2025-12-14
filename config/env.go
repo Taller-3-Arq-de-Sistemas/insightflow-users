@@ -20,7 +20,7 @@ func GetString(key, fallback string) string {
 func Load() Config {
 	return Config{
 		Port:      GetString("PORT", "8080"),
-		DBUrl:     GetString("DB_URL", "users.db"),
+		DBUrl:     GetString("DB_URL", "postgres://postgres:postgres@localhost:5432/insightflow_users?sslmode=disable"),
 		JWTSecret: GetString("JWT_SECRET", "secret"),
 	}
 }

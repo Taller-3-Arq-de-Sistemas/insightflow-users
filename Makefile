@@ -1,6 +1,6 @@
 # Variables
 APP_NAME=insightflow-users
-DB_URL=sqlite3://users.db
+export DB_URL?=postgres://postgres:postgres@localhost:5432/insightflow_users?sslmode=disable
 
 # Build
 .PHONY: build
@@ -32,17 +32,18 @@ seed:
 	go run ./cmd/seed/main.go
 
 .PHONY: reseed
-reseed:
-	rm -f users.db
-	goose up
-	go run ./cmd/seed/main.go
+reseed: migrate-down migrate-up seed
 
 # Clean
 .PHONY: clean
 clean:
 	rm -rf bin
-	rm -f users.db
 
 # Initialize and run server
 .PHONY: init
 init: clean migrate-up seed run
+
+# SQLC code generation
+.PHONY: sqlc
+sqlc:
+	sqlc generate

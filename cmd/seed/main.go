@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/Taller-3-Arq-de-Sistemas/insightflow-users/config"
-	"github.com/Taller-3-Arq-de-Sistemas/insightflow-users/internal/adapters/sqlite"
-	repository "github.com/Taller-3-Arq-de-Sistemas/insightflow-users/internal/adapters/sqlite/sqlc"
+	"github.com/Taller-3-Arq-de-Sistemas/insightflow-users/internal/adapters/postgres"
+	repository "github.com/Taller-3-Arq-de-Sistemas/insightflow-users/internal/adapters/postgres/sqlc"
 )
 
 type Role struct {
@@ -34,7 +34,7 @@ type User struct {
 
 func main() {
 	cfg := config.Load()
-	db, err := sqlite.New(cfg.DBUrl)
+	db, err := postgres.New(cfg.DBUrl)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -54,7 +54,7 @@ func main() {
 	}
 
 	for _, r := range roles {
-		_, err := db.ExecContext(ctx, "INSERT OR IGNORE INTO role (id, name, description) VALUES (?, ?, ?)", r.ID, r.Name, r.Description)
+		_, err := db.ExecContext(ctx, "INSERT INTO role (id, name, description) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING", r.ID, r.Name, r.Description)
 		if err != nil {
 			log.Printf("Failed to seed role %s: %v", r.Name, err)
 		}
