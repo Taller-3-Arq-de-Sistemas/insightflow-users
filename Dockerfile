@@ -14,7 +14,16 @@ RUN go mod download
 COPY . .
 
 # Build
-RUN CGO_ENABLED=0 GOOS=linux go build ./cmd/server/main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -o server ./cmd/server
+RUN CGO_ENABLED=0 GOOS=linux go build -o migrate ./cmd/migrate
+RUN CGO_ENABLED=0 GOOS=linux go build -o seed ./cmd/seed
+
+# Copy start script
+COPY start.sh .
+RUN chmod +x start.sh
+
+# Create data directory
+RUN mkdir -p /app/data
 
 # Optional:
 # To bind to a TCP port, runtime parameters must be supplied to the docker command.
@@ -24,4 +33,4 @@ RUN CGO_ENABLED=0 GOOS=linux go build ./cmd/server/main.go
 EXPOSE 8080
 
 # Run
-CMD ["./main"]
+CMD ["./start.sh"]
