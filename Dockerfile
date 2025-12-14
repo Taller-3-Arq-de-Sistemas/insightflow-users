@@ -22,6 +22,9 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o seed ./cmd/seed
 COPY start.sh .
 RUN chmod +x start.sh
 
+# Create data directory
+RUN mkdir -p /app/data
+
 # Optional:
 # To bind to a TCP port, runtime parameters must be supplied to the docker command.
 # But we can document in the Dockerfile what ports
