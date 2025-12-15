@@ -1,0 +1,314 @@
+{
+	"info": {
+		"_postman_id": "3a63c485-36f8-4d8c-bb9c-24fcc6a10544",
+		"name": "Taller 3 - Arquitectura de Sistemas",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29548929"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Jairo\",\n    \"last_names\": \"Calcina Valda\",\n    \"email\": \"jairo.calcina@example.com\",\n    \"username\": \"broukt\",\n    \"birth_date\": \"2000-10-28\",\n    \"address\": \"Some random address\",\n    \"phone\": \"123456789\",\n    \"password\": \"AReallyGoodP4ssw0rd\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{usersUrl}}/{{authContext}}/register",
+							"host": [
+								"{{usersUrl}}"
+							],
+							"path": [
+								"{{authContext}}",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"jairo.calcina@admin.com\",\n    \"password\": \"AReallyGoodP4ssw0rd\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{usersUrl}}/{{authContext}}/login",
+							"host": [
+								"{{usersUrl}}"
+							],
+							"path": [
+								"{{authContext}}",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{usersUrl}}/{{authContext}}/logout",
+							"host": [
+								"{{usersUrl}}"
+							],
+							"path": [
+								"{{authContext}}",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Validate",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjU4MzgzMzEsInJvbGUiOiJ1c2VyIiwic3ViIjoiNmRhOGRhMDktMWMwNC00NmRmLTgyZDYtM2E1MjFmNDZhMGU2In0.s0f0XuHakHpyJeFtJVbTVBQgehzHd9nEeWO4mMcQLzg\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{usersUrl}}/{{authContext}}/validate",
+							"host": [
+								"{{usersUrl}}"
+							],
+							"path": [
+								"{{authContext}}",
+								"validate"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Create",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Jairo\",\n    \"last_names\": \"Calcina Valda\",\n    \"email\": \"jairo.calcina@example.com\",\n    \"username\": \"jairo\",\n    \"birth_date\": \"2000-10-28\",\n    \"address\": \"Some random address\",\n    \"phone\": \"123456789\",\n    \"password\": \"AReallyGoodP4ssw0rd\",\n    \"role\": \"user\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{usersUrl}}/{{usersContext}}",
+							"host": [
+								"{{usersUrl}}"
+							],
+							"path": [
+								"{{usersContext}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List all",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Get by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{usersUrl}}/{{usersContext}}/7b9f1d65-30ad-4e8c-8758-7d761febf4aa",
+							"host": [
+								"{{usersUrl}}"
+							],
+							"path": [
+								"{{usersContext}}",
+								"7b9f1d65-30ad-4e8c-8758-7d761febf4aa"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"full_name\": \"Ignacio Avendano Ramirez\",\n    \"username\": \"funktastic\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{usersUrl}}/{{usersContext}}/e62edef1-23a0-4753-ad96-5392eb6bd9d3",
+							"host": [
+								"{{usersUrl}}"
+							],
+							"path": [
+								"{{usersContext}}",
+								"e62edef1-23a0-4753-ad96-5392eb6bd9d3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{usersUrl}}/{{usersContext}}/7b9f1d65-30ad-4e8c-8758-7d761febf4aa",
+							"host": [
+								"{{usersUrl}}"
+							],
+							"path": [
+								"{{usersContext}}",
+								"7b9f1d65-30ad-4e8c-8758-7d761febf4aa"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Health",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{usersUrl}}/health",
+					"host": [
+						"{{usersUrl}}"
+					],
+					"path": [
+						"health"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "usersUrl",
+			"value": ""
+		},
+		{
+			"key": "usersContext",
+			"value": ""
+		},
+		{
+			"key": "authContext",
+			"value": ""
+		},
+		{
+			"key": "token",
+			"value": ""
+		}
+	]
+}
